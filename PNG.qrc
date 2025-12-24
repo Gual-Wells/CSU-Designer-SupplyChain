@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/qrc">
+        <file>storage.png</file>
+        <file>client.png</file>
+    </qresource>
+</RCC>
