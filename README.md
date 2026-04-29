@@ -42,9 +42,9 @@
 
 三个权重 `a`、`b`、`c` 满足约束 `a + b + c = 1`，分别对应：
 
-- **`a`** — 全局最优引导（类 PSO gbest）
-- **`b`** — 个体历史最优引导（类 PSO pbest，per-order Pareto 集）
-- **`c`** — 惯性（沿上一次路径继续探索）
+- **`a`** — 全局最优引导（订单种群精英解集内遗传）
+- **`b`** — 个体历史最优引导（订单个体历史最优精英解集内遗传）
+- **`c`** — 惯性（概率游走搜索）
 
 每 20 代根据 Pareto 边界移动速率（`boundary_step`）与解集替换率（`replacement_rate`）自动调节三者比例。
 
@@ -70,7 +70,7 @@ crowded = (2 - power/order_num)              // 超时率惩罚
 
 | 算子 | 描述 |
 |------|------|
-| `elite_GA()` | 从精英库采样一个精英个体，逐订单随机重组，处理 child\_sisters 合并约束 |
+| `elite_GA()` | 从精英库逐个采样精英个体，逐订单随机重组，处理 child\_sisters 合并约束 |
 | `elite_PP()` | 从 `p_best` 为每个订单采样历史最优，直接构造新种群 |
 | `poweredge` 加权采样 | 余弦曲线权重，倾向采样 Pareto 前沿中部解，避免极端解主导 |
 
@@ -92,7 +92,7 @@ Data 层       领域数据模型（nodedata / edgedata / global 共享池）
 
 ### 架构演化说明
 
-`population.cpp`（145 行，全文注释保留）为重构前的历史快照。`order::exp()` 引入 `brother_order` 合并机制后，`order` 与 `population` 产生循环依赖，因此将 `order` 重构为 `population` 的嵌套类，两个文件合并为 `population_and_order.cpp`（1290 行）。注释文件为对照检查点，非冗余代码。
+`population.cpp`与`order.cpp`（全文注释保留）为重构前的历史快照。`order::exp()` 引入 `brother_order` 合并机制后，`order` 与 `population` 产生循环依赖，因此将 `order` 重构为 `population` 的嵌套类，两个文件合并为 `population_and_order.cpp`（1290 行）。注释文件为对照检查点，非冗余代码。
 
 ---
 
@@ -116,10 +116,10 @@ Data 层       领域数据模型（nodedata / edgedata / global 共享池）
 
 - **交互式拓扑编辑器** — 拖拽放置节点，点击连边，双击弹出属性对话框，支持缩放与平移
 - **参数控制面板** — 种群数、迭代步数、`α`、`save_point` 等参数 GUI 可调
-- **Pareto 可视化** — Qt Charts 绘制每代 Pareto 散点图（X轴成本，Y轴时效）
+- **Pareto 可视化** — Qt Charts 绘制 Pareto 散点图（X轴成本，Y轴时效）
 - **解集选择对话框** — 从 Pareto 前沿中选取具体调度方案
 - **场景持久化** — 完整 JSON 序列化/反序列化（节点、边、订单、算法参数），支持实验复现
-- **策略消融实验** — 提供自构图场景，支持关闭单项机制进行对照实验
+- **策略消融实验** — 提供自构图场景，支持关闭单项机制与参数调整进行对照实验
 
 ---
 
@@ -174,9 +174,9 @@ make -j$(nproc)
 
 ## 已知局限 / Known Limitations
 
-- 算法主循环在 UI 线程执行，运行期间界面暂停响应（建议后续迁移至 `QThread`）
-- 当前在 50–100 节点规模下运行良好；数百节点时 reach 矩阵内存压力显著上升，搜索效率下降
-- 尚未实现基线算法对照（NSGA-II / 随机搜索），消融实验基于自构图场景
+- 算法主循环在 UI 线程执行，运行期间界面暂停响应（因快速迭代开发代码耦合与质量问题，暂拟后续利用 `QThread` 更新多线程机制）
+- 当前在 50–100 节点规模下运行良好；数百节点时 reach 矩阵内存压力显著上升，搜索效率下降；并且当前参数动态收敛策略此时不再易用
+- 因快速迭代开发代码耦合与质量关系，尚未实现基线算法对照（NSGA-II / 随机搜索），消融实验基于自构图场景
 
 ---
 
@@ -194,7 +194,8 @@ make -j$(nproc)
 │   nodeitem / edgeitem
 ├── chartwidget.cpp / .h         # Pareto 散点图可视化
 ├── choosedialog.cpp / .h        # 解集选择对话框
-├── population.cpp               # 重构前历史快照（全文注释，仅供参考）
+├── population.cpp               # 历史快照（全文注释，仅供参考）
+├── order.cpp               # 历史快照（全文注释，仅供参考）
 └── CSU_Designer_SupplyChain.pro
 ```
 
