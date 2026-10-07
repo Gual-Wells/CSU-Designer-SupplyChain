@@ -203,8 +203,8 @@ make -j$(nproc)
 
 ## Rights and third-party components
 
-Current revisions of the original project code, documentation, project-specific algorithms, structure and other material owned or licensable by Gual Wells are governed by [GW-ROL-1.0](LICENSE), a **reference-only, non-open-source** license. External readers may study the implementation and independently learn from ideas and methods that are not protected by exclusive rights, but no permission is granted to copy, republish, adapt, redistribute or commercially exploit substantial protected portions except as required by law or with prior written permission.
+Current revisions of the original project code, documentation, project-specific algorithms, structure and other material owned or licensable by Gual Wells are governed by [GW-ROL-1.1](LICENSE), a **reference-only, non-open-source** license. External readers may study the implementation and independently learn from ideas and methods that are not protected by exclusive rights, but no permission is granted to copy, republish, adapt, redistribute or commercially exploit substantial protected portions except as required by law or with prior written permission.
 
-Earlier revisions whose README expressly offered the project under MIT retain any valid MIT grants already made for those historical versions; GW-ROL-1.0 is prospective and does not revoke them.
+Earlier revisions whose README expressly offered the project under MIT retain any valid MIT grants already made for those historical versions; GW-ROL-1.1 is prospective and does not revoke them.
 
 Qt, Eigen and any other third-party framework, library, image or asset remain governed by their own rightsholders and license terms. This repository's license does not relicense those materials.
